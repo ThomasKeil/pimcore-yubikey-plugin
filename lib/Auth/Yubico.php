@@ -9,9 +9,11 @@
    * @license     http://opensource.org/licenses/bsd-license.php New BSD License
    * @version     2.0
    * @link        http://www.yubico.com/
+   *
+   * Changes by thomas@weblizards.de
+   * Replaced PEAR errors with Exceptions to remove dependencies
    */
 
-require_once 'PEAR.php';
 
 /**
  * Class for verifying Yubico One-Time-Passcodes
@@ -244,6 +246,7 @@ class Auth_Yubico
 	 * @param  array @parameters  Array with strings representing
 	 *                            parameters to parse
 	 * @return array  parameter array from last response
+	 * @throws Exception
 	 * @access public
 	 */
 	function getParameters($parameters)
@@ -254,7 +257,7 @@ class Auth_Yubico
 	  $param_array = array();
 	  foreach ($parameters as $param) {
 	    if(!preg_match("/" . $param . "=([0-9]+)/", $this->_response, $out)) {
-	      return PEAR::raiseError('Could not parse parameter ' . $param . ' from response');
+	      throw new Exception('Could not parse parameter ' . $param . ' from response');
 	    }
 	    $param_array[$param]=$out[1];
 	  }
@@ -275,7 +278,8 @@ class Auth_Yubico
 	 *                             and 100 or "fast" or "secure".
 	 * @param int $timeout         Max number of seconds to wait
 	 *                             for responses
-	 * @return mixed               PEAR error on error, true otherwise
+	 * @return mixed               true on success
+	 * @throws Exception
 	 * @access public
 	 */
 	function verify($token, $use_timestamp=null, $wait_for_all=False,
@@ -284,7 +288,7 @@ class Auth_Yubico
 	  /* Construct parameters string */
 	  $ret = $this->parsePasswordOTP($token);
 	  if (!$ret) {
-	    return PEAR::raiseError('Could not parse Yubikey OTP');
+	    throw new Exception('Could not parse Yubikey OTP');
 	  }
 	  $params = array('id'=>$this->_id, 
 			  'otp'=>$ret['otp'],
@@ -438,9 +442,9 @@ class Auth_Yubico
 		      curl_close($h);
 		    }
 		    curl_multi_close($mh);
-		    if ($replay) return PEAR::raiseError('REPLAYED_OTP');
+		    if ($replay) throw new Exception('REPLAYED_OTP');
 		    if ($valid) return true;
-		    return PEAR::raiseError($status);
+		    throw new Exception($status);
 		  }
 		
 		curl_multi_remove_handle($mh, $info['handle']);
@@ -462,9 +466,8 @@ class Auth_Yubico
 	  }
 	  curl_multi_close ($mh);
 	  
-	  if ($replay) return PEAR::raiseError('REPLAYED_OTP');
+	  if ($replay) throw new Exception('REPLAYED_OTP');
 	  if ($valid) return true;
-	  return PEAR::raiseError('NO_VALID_ANSWER');
+	  throw new Exception('NO_VALID_ANSWER');
 	}
 }
-?>

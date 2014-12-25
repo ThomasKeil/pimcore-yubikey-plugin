@@ -8,8 +8,8 @@
  * Time: 12:31
  *
  * Dieser Quellcode ist geistiges Eigentum der Weblizards GmbH
- * und darf ohne vorheriges schriftliches Einverständnis nicht
- * vervielfältigt werden.
+ * und darf ohne vorheriges schriftliches Einverstï¿½ndnis nicht
+ * vervielfï¿½ltigt werden.
  *
  */
 
@@ -23,13 +23,17 @@ class YubiKey_Authenticator {
     Pimcore_Log_Simple::log("YubiKey", "Authenticating User ".$username);
 
     $pimcore_user = User::getByName($username);
-    if (! $pimcore_user instanceof User) return null;
+    if (! $pimcore_user instanceof User) {
+      Pimcore_Log_Simple::log("YubiKey", "User ".$username." nicht gefunden.");
 
-    $yubikey_user = YubiKey_Users::getById($pimcore_user->getId());
+      return null;
+    }
+
+    $yubikey_user = YubiKey_User::getById($pimcore_user->getId());
 
     if (is_null($yubikey_user)) return null;
 
-    if ($yubikey_user["activelocal"] != 1) {
+    if (!$yubikey_user->getActivelocal()) {
       // TODO hier kommt jetzt der remote-Teil
       return null;
     }
@@ -37,20 +41,27 @@ class YubiKey_Authenticator {
     $yubico = new Auth_Yubico(self::$id, self::$key);
 
     $serial = substr($password, 0, 12);
-    if ($yubikey_user["serial"] != $serial) return null;
 
-    $auth = $yubico->verify($password);
+    foreach ($yubikey_user->getKeys() as $key) {
+      if ($key["serial"] == $serial) {
+        try {
+          $yubico->verify($password);
 
-    if (PEAR::isError($auth)) {
-      Pimcore_Log_Simple::log("YubiKey", "Authentication failed: " . $auth->getMessage());
-      Pimcore_Log_Simple::log("YubiKey", "Debug output from server: ".$yubico->getLastResponse());
+        } catch (Exception $e) {
+          Pimcore_Log_Simple::log("YubiKey", "Authentication failed: " . $e->getMessage());
+          Pimcore_Log_Simple::log("YubiKey", "Debug output from server: ".$yubico->getLastResponse());
 
-      return null;
+          return null;
+        }
+
+        Pimcore_Log_Simple::log("YubiKey", "Success Authenticating User ".$username);
+        $user = User::getByName($username);
+        return $user;
+
+      }
     }
+    return null;
 
-    Pimcore_Log_Simple::log("YubiKey", "Success Authenticating User ".$username);
-    $user = User::getByName($username);
-    return $user;
   }
 
 }
