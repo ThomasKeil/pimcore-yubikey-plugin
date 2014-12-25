@@ -24,7 +24,7 @@ class YubiKey_UserController extends Pimcore_Controller_Action_Admin {
       $this->_helper->json(array("success" => false, "message" => "User not found"));
     }
 
-    // Die Keys m�ssen umgewandelt werden weil die ExtJS-Stores halt hirnrissig sind
+    // Die Keys müssen umgewandelt werden weil die ExtJS-Stores halt hirnrissig sind
     $keys = array();
     foreach ($user->getKeys() as $key) {
       $keys[] = array($key["serial"], $key["comment"]);
