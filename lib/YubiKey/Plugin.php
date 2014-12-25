@@ -7,31 +7,36 @@ if (!defined("YUBIKEY_PLUGIN_VAR"))  define("YUBIKEY_PLUGIN_VAR", PIMCORE_WEBSIT
 class YubiKey_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plugin_Interface {
     
 	public static function install (){
+      if (!is_dir(YUBIKEY_PLUGIN_VAR)) mkdir(YUBIKEY_PLUGIN_VAR);
 
-    if (version_compare(Pimcore_Version::$version, "2.2.0", ">=")) {
-      Pimcore::getEventManager()->attach("admin.login.login.failed", function ($event) {
-
-        $username = $event->getParam("username");
-        $password = $event->getParam("password");
-
-        $user = YubiKey_Authenticator::authenticate($username, $password);
-        if ($user instanceof User) {
-          $event->getTarget()->setUser($user);
+      foreach (array("users.xml", "config.xml") as $config_file) {
+        if (!file_exists(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR.$config_file)) {
+          copy(YUBIKEY_PLUGIN_PATH.DIRECTORY_SEPARATOR."files".DIRECTORY_SEPARATOR.$config_file, YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR.$config_file);
         }
 
-      });
-    }
+      }
+
+      if (self::isInstalled()) {
+        return "YubiKey Plugin successfully installed.";
+      } else {
+        return "YubiKey Plugin could not be installed";
+      }
 
 	}
 	
 	public static function uninstall (){
-        // implement your own logic here
-        return true;
+
+      if (!self::isInstalled()) {
+        return "YubiKey Plugin successfully uninstalled.";
+      } else {
+        return "YubiKey Plugin could not be uninstalled";
+      }
 	}
 
 	public static function isInstalled () {
-        // implement your own logic here
-        return true;
+      if (!is_dir(YUBIKEY_PLUGIN_PATH)) return false;
+      if (!is_file(YUBIKEY_PLUGIN_VAR."/config.xml")) return false;
+      return true;
 	}
 
   /**
@@ -61,4 +66,17 @@ class YubiKey_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_
     return "/YubiKey/texts/de.csv";
   }
 
+}
+if (version_compare(Pimcore_Version::$version, "2.2.0", ">=")) {
+  Pimcore::getEventManager()->attach("admin.login.login.failed", function ($event) {
+
+    $username = $event->getParam("username");
+    $password = $event->getParam("password");
+
+    $user = YubiKey_Authenticator::authenticate($username, $password);
+    if ($user instanceof User) {
+      $event->getTarget()->setUser($user);
+    }
+
+  });
 }

@@ -6,10 +6,10 @@
             <pluginName>YubiKey</pluginName>
 
             <!-- a short description -->
-			<pluginDescription><![CDATA[]]></pluginDescription>
+			<pluginDescription><![CDATA[Authenticate with YubiKey USB Thumbnails]]></pluginDescription>
 
             <!-- meta data -->
-            <pluginVersion>1.0</pluginVersion>
+            <pluginVersion>0.1</pluginVersion>
             <pluginRevision>1</pluginRevision>
             <pluginBuildTimestamp>0</pluginBuildTimestamp>
 
