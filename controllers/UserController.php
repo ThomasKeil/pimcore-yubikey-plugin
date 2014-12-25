@@ -8,8 +8,8 @@
  * Time: 18:12
  *
  * Dieser Quellcode ist geistiges Eigentum der Weblizards GmbH
- * und darf ohne vorheriges schriftliches Einverständnis nicht
- * vervielfältigt werden.
+ * und darf ohne vorheriges schriftliches Einverstï¿½ndnis nicht
+ * vervielfï¿½ltigt werden.
  *
  */
 
@@ -24,7 +24,7 @@ class YubiKey_UserController extends Pimcore_Controller_Action_Admin {
       $this->_helper->json(array("success" => false, "message" => "User not found"));
     }
 
-    // Die Keys müssen umgewandelt werden weil die ExtJS-Stores halt hirnrissig sind
+    // Die Keys mï¿½ssen umgewandelt werden weil die ExtJS-Stores halt hirnrissig sind
     $keys = array();
     foreach ($user->getKeys() as $key) {
       $keys[] = array($key["serial"], $key["comment"]);
@@ -58,6 +58,10 @@ class YubiKey_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     $yubikey_user = YubiKey_User::getById($id);
+    if (is_null($yubikey_user)) {
+      $yubikey_user = new YubiKey_User();
+      $yubikey_user->setId($id);
+    }
     $yubikey_user->setActivelocal($keymapping["activelocal"] == 1);
     $yubikey_user->setKeys($keys);
     $yubikey_user->save();

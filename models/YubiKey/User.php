@@ -121,6 +121,47 @@ class YubiKey_User {
   }
 
   public function save() {
+
+    $dom = new DOMDocument();
+    $dom->load(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."users.xml");
+
+    $users_node = $dom->getElementsByTagName("users")->item(0);
+
+    /** @var DOMNodeList $userNodes */
+    $userNodes = $users_node->getElementsByTagName("user");
+    foreach ($userNodes as $userNode) {
+      /** @var DOMNode $userNode */
+      if ($userNode->getAttribute("id") == $this->getId()) {
+        $users_node->removeChild($userNode);
+      }
+    }
+
+    $user = $dom->createElement("user");
+    $users_node->appendChild($user);
+    $user->setAttribute("id", $this->getId());
+
+    $keys = $dom->createElement("keys");
+    $user->appendChild($keys);
+    foreach ($this->getKeys() as $key) {
+      $xml_key = $dom->createElement("key");
+      $keys->appendChild($xml_key);
+
+      $serial = $dom->createElement("serial", $key["serial"]);
+      $xml_key->appendChild($serial);
+
+      $comment = $dom->createElement("comment", $key["comment"]);
+      $xml_key->appendChild($comment);
+    }
+
+    $activelocal = $dom->createElement("activelocal", $this->getActivelocal() ? 1 : 0);
+    $user->appendChild($activelocal);
+
+    $dom->save(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."users.xml");
+
+    return;
+
+
+
     // TODO: Umstellen auf DOM, da hier das Delete nicht funktioniert.
     $xml = simplexml_load_file(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."users.xml");
     $users_list = $xml->xpath("//user[@id=".$this->getId()."]");
@@ -129,10 +170,6 @@ class YubiKey_User {
       $user->parentNode->removeChild($user);
     }
 
-    $user = $xml->addChild("user");
-    $user->addAttribute("id", $this->getId());
-
-    $activelocal = $user->addChild("activelocal", $this->getActivelocal() ? 1 : 0);
 
     $keys = $user->addChild("keys");
     foreach ($this->getKeys() as $key) {
