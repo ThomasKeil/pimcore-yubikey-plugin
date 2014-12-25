@@ -24,7 +24,7 @@ pimcore.plugin.yubikey = Class.create(pimcore.plugin.admin, {
                 try {
                     pimcore.globalmanager.get("yubikey_settings").activate();
                 } catch (e) {
-                    pimcore.globalmanager.add("yubikey_settings", new yubikey.settings());
+                    pimcore.globalmanager.add("yubikey_settings", new pimcore.plugin.yubikey.settings());
                 }
 
             }

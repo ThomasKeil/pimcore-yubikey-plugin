@@ -1,11 +1,11 @@
 /**
  * Created by thomas on 11.08.14.
  */
-pimcore.registerNS("yubikey.settings");
-yubikey.settings = Class.create({
+pimcore.registerNS("pimcore.plugin.yubikey.settings");
+pimcore.plugin.yubikey.settings = Class.create({
+
 
     initialize: function () {
-
         this.getData();
     },
 
