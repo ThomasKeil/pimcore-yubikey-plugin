@@ -62,7 +62,7 @@ yubikey.settings.user.user.settings = Class.create({
         var typesColumns = [
             {
                 header: t("Serial"),
-                id: "serrial",
+                id: "serial",
                 width: 200,
                 sortable: false,
                 dataIndex: 'serial',
