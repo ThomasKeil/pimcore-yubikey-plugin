@@ -7,7 +7,25 @@ if (!defined("YUBIKEY_PLUGIN_VAR"))  define("YUBIKEY_PLUGIN_VAR", PIMCORE_WEBSIT
 
 
 class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
-    
+
+    public function init() {
+        \Pimcore::getEventManager()->attach("admin.login.login.failed", function (\Zend_EventManager_Event $event) {
+
+            $username = $event->getParam("username");
+            $password = $event->getParam("password");
+
+            $user = Authenticator::authenticate($username, $password);
+            if (is_null($user)) {
+                $user = RemoteAuthenticator::authenticate($username, $password);
+            }
+            if ($user instanceof User) {
+                $event->getTarget()->setUser($user);
+            }
+
+        });
+
+    }
+
 	public static function install (){
       if (!is_dir(YUBIKEY_PLUGIN_VAR)) mkdir(YUBIKEY_PLUGIN_VAR);
 
@@ -69,18 +87,3 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
   }
 
 }
-
-\Pimcore::getEventManager()->attach("admin.login.login.failed", function (\Zend_EventManager_Event $event) {
-
-    $username = $event->getParam("username");
-    $password = $event->getParam("password");
-
-    $user = Authenticator::authenticate($username, $password);
-    if (is_null($user)) {
-        $user = RemoteAuthenticator::authenticate($username, $password);
-    }
-    if ($user instanceof User) {
-      $event->getTarget()->setUser($user);
-    }
-
-});
