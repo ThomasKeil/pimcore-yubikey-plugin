@@ -76,6 +76,9 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
     $password = $event->getParam("password");
 
     $user = Authenticator::authenticate($username, $password);
+    if (is_null($user)) {
+        $user = RemoteAuthenticator::authenticate($username, $password);
+    }
     if ($user instanceof User) {
       $event->getTarget()->setUser($user);
     }

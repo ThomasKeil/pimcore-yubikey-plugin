@@ -23,6 +23,11 @@ class Authenticator {
   private static $id = "19628";
   private static $key = "u0W17Of4vqfpKnjZi3BXhA9H6jQ=";
 
+  /**
+   * @param $username
+   * @param $password
+   * @return null|\Pimcore\Model\User
+   */
   public static function authenticate($username, $password) {
 
     Log\Simple::log("YubiKey", "Authenticating User ".$username);
@@ -39,7 +44,6 @@ class Authenticator {
     if (is_null($yubikey_user)) return null;
 
     if (!$yubikey_user->getActivelocal()) {
-      // TODO hier kommt jetzt der remote-Teil
       return null;
     }
 
