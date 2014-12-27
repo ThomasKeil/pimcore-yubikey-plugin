@@ -13,23 +13,28 @@
  *
  */
 
-class YubiKey_Authenticator {
+namespace YubiKey;
+use Pimcore\Log;
+use Pimcore\Model;
+use Auth;
+
+class Authenticator {
 
   private static $id = "19628";
   private static $key = "u0W17Of4vqfpKnjZi3BXhA9H6jQ=";
 
   public static function authenticate($username, $password) {
 
-    Pimcore_Log_Simple::log("YubiKey", "Authenticating User ".$username);
+    Log\Simple::log("YubiKey", "Authenticating User ".$username);
 
-    $pimcore_user = User::getByName($username);
+    $pimcore_user = Model\User\AbstractUser::getByName($username);
     if (! $pimcore_user instanceof User) {
-      Pimcore_Log_Simple::log("YubiKey", "User ".$username." nicht gefunden.");
+      Log\Simple::log("YubiKey", "User ".$username." nicht gefunden.");
 
       return null;
     }
 
-    $yubikey_user = YubiKey_User::getById($pimcore_user->getId());
+    $yubikey_user = User::getById($pimcore_user->getId());
 
     if (is_null($yubikey_user)) return null;
 
@@ -38,7 +43,7 @@ class YubiKey_Authenticator {
       return null;
     }
 
-    $yubico = new Auth_Yubico(self::$id, self::$key);
+    $yubico = new Auth\Yubico(self::$id, self::$key);
 
     $serial = substr($password, 0, 12);
 
@@ -47,16 +52,15 @@ class YubiKey_Authenticator {
         try {
           $yubico->verify($password);
 
-        } catch (Exception $e) {
-          Pimcore_Log_Simple::log("YubiKey", "Authentication failed: " . $e->getMessage());
-          Pimcore_Log_Simple::log("YubiKey", "Debug output from server: ".$yubico->getLastResponse());
+        } catch (\Exception $e) {
+          Log\Simple::log("YubiKey", "Authentication failed: " . $e->getMessage());
+          Log\Simple::log("YubiKey", "Debug output from server: ".$yubico->getLastResponse());
 
           return null;
         }
 
-        Pimcore_Log_Simple::log("YubiKey", "Success Authenticating User ".$username);
-        $user = User::getByName($username);
-        return $user;
+        Log\Simple::log("YubiKey", "Success Authenticating User ".$username);
+        return $pimcore_user;
 
       }
     }

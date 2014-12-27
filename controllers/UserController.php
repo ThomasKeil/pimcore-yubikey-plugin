@@ -13,18 +13,28 @@
  *
  */
 
-class YubiKey_UserController extends Pimcore_Controller_Action_Admin {
+namespace YubiKey;
+
+class UserController extends \Pimcore\Controller\Action\Admin {
 
   public function loadAction() {
     $id = $this->getParam("id");
 
-    $user = YubiKey_User::getById($id);
+    $this->protectCSRF();
+
+    $user = User::getById($id);
 
     if (is_null($user)) {
       $this->_helper->json(array("success" => false, "message" => "User not found"));
     }
 
-    // Die Keys müssen umgewandelt werden weil die ExtJS-Stores halt hirnrissig sind
+    $pimcore_user = User::getById(intval($this->getParam("id")));
+
+    if($pimcore_user instanceof User && $pimcore_user->isAdmin() && !$user->getPimcoreUser()->isAdmin()) {
+      throw new \Exception("Only admin users are allowed to modify admin users");
+    }
+
+    // Umwandlung der Keys
     $keys = array();
     foreach ($user->getKeys() as $key) {
       $keys[] = array($key["serial"], $key["comment"]);

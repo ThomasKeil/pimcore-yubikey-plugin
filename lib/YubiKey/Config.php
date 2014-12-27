@@ -6,13 +6,15 @@
  * Time: 09:02
  */
 
+namespace YubiKey;
+
 /**
- * Class YubiKey_Config
+ * Class YubiKey\Config
  *
- * Reads and creates the configfile
+ * Reads and creates the config file
  * located at website/var/plugins/YubiKey/config.xml
  */
-class YubiKey_Config {
+class Config {
 
   /**
    * @var array
@@ -25,16 +27,16 @@ class YubiKey_Config {
   /**
    * Singleton instance
    *
-   * @var YubiKey_Config
+   * @var \YubiKey\Config
    */
   protected static $_instance = null;
 
   /**
-   * Returns an instance of YubiKey_Config
+   * Returns an instance of \YubiKey\Config
    *
    * Singleton pattern implementation
    *
-   * @return YubiKey_Config
+   * @return \YubiKey\Config
    */
   public static function getInstance() {
     if (null === self::$_instance) {
@@ -47,10 +49,10 @@ class YubiKey_Config {
 
   public function __construct() {
     try {
-      $config = new Zend_Config_Xml(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml");
+      $config = new \Zend_Config_Xml(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml");
       $this->config = $config->toArray();
-    } catch (Zend_Config_Exception $e) {
-      Logger::error("Problems with config file \"".YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml\": ".$e->getMessage());
+    } catch (\Zend_Config_Exception $e) {
+      \Logger::error("Problems with config file \"".YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml\": ".$e->getMessage());
       $this->config = $this->defaults;
     }
   }
@@ -73,8 +75,8 @@ class YubiKey_Config {
 
     $data = $this->array_join($defaults, $params);
 
-    $config = new Zend_Config($data, true);
-    $writer = new Zend_Config_Writer_Xml(array(
+    $config = new \Zend_Config($data, true);
+    $writer = new \Zend_Config_Writer_Xml(array(
       "config" => $config,
       "filename" => YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml"
     ));

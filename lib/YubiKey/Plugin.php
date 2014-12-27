@@ -1,10 +1,12 @@
 <?php
 
+namespace YubiKey;
+
 if (!defined("YUBIKEY_PLUGIN_PATH")) define("YUBIKEY_PLUGIN_PATH", PIMCORE_PLUGINS_PATH."/YubiKey");
 if (!defined("YUBIKEY_PLUGIN_VAR"))  define("YUBIKEY_PLUGIN_VAR", PIMCORE_WEBSITE_PATH . "/var/plugins/YubiKey");
 
 
-class YubiKey_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_Plugin_Interface {
+class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
     
 	public static function install (){
       if (!is_dir(YUBIKEY_PLUGIN_VAR)) mkdir(YUBIKEY_PLUGIN_VAR);
@@ -50,7 +52,7 @@ class YubiKey_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_
    */
   public function authenticateUser($username, $password)  {
 
-    return YubiKey_Authenticator::authenticate($username, $password);
+    return Authenticator::authenticate($username, $password);
 
   }
 
@@ -67,16 +69,15 @@ class YubiKey_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_API_
   }
 
 }
-if (version_compare(Pimcore_Version::$version, "2.2.0", ">=")) {
-  Pimcore::getEventManager()->attach("admin.login.login.failed", function ($event) {
+
+\Pimcore::getEventManager()->attach("admin.login.login.failed", function (\Zend_EventManager_Event $event) {
 
     $username = $event->getParam("username");
     $password = $event->getParam("password");
 
-    $user = YubiKey_Authenticator::authenticate($username, $password);
+    $user = Authenticator::authenticate($username, $password);
     if ($user instanceof User) {
       $event->getTarget()->setUser($user);
     }
 
-  });
-}
+});

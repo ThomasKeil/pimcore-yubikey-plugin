@@ -13,12 +13,15 @@
  *
  */
 
-class YubiKey_User {
+namespace YubiKey;
+use Pimcore\Model;
+
+class User {
 
   private $id;
-  private $activelocal;
+  private $active_local;
   private $keys;
-  private $pimcore_user;
+
 
   /**
    * @return mixed
@@ -54,27 +57,27 @@ class YubiKey_User {
    * @return mixed
    */
   public function getActivelocal() {
-    return $this->activelocal;
+    return $this->active_local;
   }
 
   /**
-   * @param mixed $activelocal
+   * @param mixed $active_local
    */
-  public function setActivelocal($activelocal) {
-    $this->activelocal = $activelocal;
+  public function setActivelocal($active_local) {
+    $this->active_local = $active_local;
   }
 
   /**
-   * @return User
+   * @return \Pimcore\Model\User
    */
   public function getPimcoreUser() {
-    $user = User::getById($this->getId());
+    $user = Model\User\AbstractUser::getById($this->getId());
     return $user;
   }
 
   /**
    * @param $id
-   * @return null|YubiKey_User
+   * @return null|\YubiKey\User
    */
   public static function getById($id) {
     $xml_content = file_get_contents(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."users.xml");
@@ -86,7 +89,7 @@ class YubiKey_User {
 
       $keys = array();
       foreach ($user->keys->key as $key) {
-        /** @var SimpleXMLElement $key */
+        /** @var \SimpleXMLElement $key */
         $keys[] = array(
           "serial" => substr($key->serial->__toString(), 0, 12),
           "comment" => $key->comment->__toString()
@@ -122,15 +125,16 @@ class YubiKey_User {
 
   public function save() {
 
-    $dom = new DOMDocument();
+    $dom = new \DOMDocument();
     $dom->load(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."users.xml");
 
+    /** @var \DOMElement $users_node */
     $users_node = $dom->getElementsByTagName("users")->item(0);
 
-    /** @var DOMNodeList $userNodes */
+    /** @var \DOMNodeList $userNodes */
     $userNodes = $users_node->getElementsByTagName("user");
     foreach ($userNodes as $userNode) {
-      /** @var DOMNode $userNode */
+      /** @var \DOMElement $userNode */
       if ($userNode->getAttribute("id") == $this->getId()) {
         $users_node->removeChild($userNode);
       }
@@ -153,35 +157,12 @@ class YubiKey_User {
       $xml_key->appendChild($comment);
     }
 
-    $activelocal = $dom->createElement("activelocal", $this->getActivelocal() ? 1 : 0);
-    $user->appendChild($activelocal);
+    $active_local = $dom->createElement("activelocal", $this->getActivelocal() ? 1 : 0);
+    $user->appendChild($active_local);
 
     $dom->save(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."users.xml");
 
     return;
-
-
-
-    // TODO: Umstellen auf DOM, da hier das Delete nicht funktioniert.
-    $xml = simplexml_load_file(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."users.xml");
-    $users_list = $xml->xpath("//user[@id=".$this->getId()."]");
-
-    foreach ($users_list as $user) { // Sollte eh nur einer sein
-      $user->parentNode->removeChild($user);
-    }
-
-
-    $keys = $user->addChild("keys");
-    foreach ($this->getKeys() as $key) {
-      $xml_key = $keys->addChild("key");
-      $xml_key->addChild("serial", $key["serial"]);
-      $xml_key->addChild("comment", $key["comment"]);
-    }
-
-    $result = $xml->asXML(YUBIKEY_PLUGIN_VAR . DIRECTORY_SEPARATOR . "users.xml");
-    if ($result === false) {
-      throw new Exception("Error writing ".YUBIKEY_PLUGIN_VAR . DIRECTORY_SEPARATOR . "users.xml");
-    }
   }
 }
 
