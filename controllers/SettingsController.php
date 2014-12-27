@@ -1,11 +1,9 @@
 <?php
 
-namespace YubiKey;
-
-class SettingsController extends \Pimcore\Controller\Action\Admin {
+class YubiKey_SettingsController extends \Pimcore\Controller\Action\Admin {
 
   public function settingsAction() {
-    $config = Config::getInstance();
+    $config = \YubiKey\Config::getInstance();
     $data = $config->getData();
     $this->_helper->json($data);
   }
@@ -16,16 +14,20 @@ class SettingsController extends \Pimcore\Controller\Action\Admin {
     // convert all special characters to their entities so the xml writer can put it into the file
     $values = array_htmlspecialchars($values);
     try {
-      $config = Config::getInstance();
+      $config = \YubiKey\Config::getInstance();
       $data = $config->getData();
 
       $new_data = array(
-        "server" => $values["server"],
-        "port" => $values["port"],
-        "accesstoken" => $values["accesstoken"],
-        "rsa" => array(
-          "public" => $values["rsa.public"],
-          "private" => $values["rsa.private"]
+        "yubikey" => array(
+          "local" => array(
+              "uselocal" => $values["local_uselocal"] ? 1 : 0),
+          "remote" => array(
+              "useremote" =>  $values["remote_useremote"] ? 1 : 0,
+              "server" => $values["remote_server"],
+              "port" => $values["remote_port"],
+              "apikey" => $values["remote_apikey"],
+              "usessl" =>  $values["remote_usessl"] ? 1 : 0
+          )
         )
       );
 

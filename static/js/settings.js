@@ -13,10 +13,15 @@ pimcore.plugin.yubikey.settings = Class.create({
         Ext.Ajax.request({
             url: "/plugin/YubiKey/settings/settings",
             success: function (response) {
-                this.data = Ext.decode(response.responseText);
+                var data = Ext.decode(response.responseText)
+                this.data = data.yubikey;
+                console.log(this.data);
                 this.getTabPanel();
 
-            }.bind(this)
+            }.bind(this),
+            failure: function(response, opts) {
+                console.log('server-side failure with status code ' + response.status);
+            }
         });
     },
 
@@ -76,61 +81,59 @@ pimcore.plugin.yubikey.settings = Class.create({
                 items: [
                     {
                         xtype:'fieldset',
-                        title: t('Server'),
+                        title: t('Lokale Authentifizierung'),
                         collapsible: true,
-                        collapsed: true,
+                        collapsed: false,
                         autoHeight:true,
                         labelWidth: 250,
                         items: [
                             {
-                                xtype: "textfield",
-                                fieldLabel: t("Delivery URL"),
-                                name: "deliveryurl",
-                                value: this.data.delivery.url,
-                                width: 400
-                            },
-                            {
                                 xtype: "checkbox",
-                                fieldLabel: t("Sandbox benutzen"),
-                                name: "deliveryusesandbox",
-                                checked: this.data.delivery.sandbox
-                            },
-                            {
-                                xtype: "textfield",
-                                fieldLabel: t("Delivery Sandbox URL"),
-                                name: "deliveryurl_sandbox",
-                                value: this.data.delivery.url_sandbox,
-                                width: 400
-                            },
-                            {
-                                xtype: "checkbox",
-                                fieldLabel: t("Log Requests"),
-                                name: "deliverylogrequests",
-                                checked: this.data.delivery.logrequests
+                                fieldLabel: t("Lokale Authentifizierung benutzen"),
+                                name: "local_uselocal",
+                                checked: this.data.local.uselocal
                             }
                         ]
                     },
                     {
                         xtype:'fieldset',
-                        title: t('RSA'),
+                        title: t('Zentrale Authentifizierung'),
                         collapsible: true,
-                        collapsed: true,
+                        collapsed: false,
                         autoHeight:true,
                         labelWidth: 250,
                         items: [
                             {
-                                xtype: "textfield",
-                                fieldLabel: t("User"),
-                                name: "openitsmsuser",
-                                value: this.data.openitsms.user,
-                                width: 400
+                                xtype: "checkbox",
+                                fieldLabel: t("Zentrale Authentifizierung benutzen"),
+                                name: "remote_useremote",
+                                checked: this.data.remote.useremote
                             },
-
                             {
                                 xtype: "textfield",
-                                fieldLabel: t("Passwort"),
-                                name: "openitsmspassword",
-                                value: this.data.openitsms.password,
+                                fieldLabel: t("remote_server"),
+                                name: "remote_server",
+                                value: this.data.remote.server,
+                                width: 400
+                            },
+                            {
+                                xtype: "textfield",
+                                fieldLabel: t("port"),
+                                name: "remote_port",
+                                value: this.data.remote.port,
+                                width: 400
+                            },
+                            {
+                                xtype: "checkbox",
+                                fieldLabel: t("SSL verwenden"),
+                                name: "remote_usessl",
+                                checked: this.data.remote.usessl
+                            },
+                            {
+                                xtype: "textfield",
+                                fieldLabel: t("apikey"),
+                                name: "remote_apikey",
+                                value: this.data.remote.apikey,
                                 width: 400
                             }
                         ]
