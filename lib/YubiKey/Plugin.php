@@ -6,7 +6,9 @@ if (!defined("YUBIKEY_PLUGIN_PATH")) define("YUBIKEY_PLUGIN_PATH", PIMCORE_PLUGI
 if (!defined("YUBIKEY_PLUGIN_VAR"))  define("YUBIKEY_PLUGIN_VAR", PIMCORE_WEBSITE_PATH . "/var/plugins/YubiKey");
 
 
-class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
+use Pimcore\API\Plugin as PluginLib;
+
+class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
 
     public function init() {
         \Pimcore::getEventManager()->attach("admin.login.login.failed", function (\Zend_EventManager_Event $event) {
