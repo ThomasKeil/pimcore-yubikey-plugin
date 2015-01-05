@@ -22,28 +22,28 @@ class UserController extends \Pimcore\Controller\Action\Admin {
 
     $this->protectCSRF();
 
-    $user = User::getById($id);
+    $yubikey_user = User::getById($id);
 
-    if (is_null($user)) {
+    if (is_null($yubikey_user)) {
       $this->_helper->json(array("success" => false, "message" => "User not found"));
     }
 
-    $pimcore_user = User::getById(intval($this->getParam("id")));
+    $pimcore_user = \Pimcore\Model\User::getById(intval($this->getParam("id")));
 
-    if($pimcore_user instanceof User && $pimcore_user->isAdmin() && !$user->getPimcoreUser()->isAdmin()) {
+    if($pimcore_user instanceof \Pimcore\Model\User && $pimcore_user->isAdmin() && !$yubikey_user->getPimcoreUser()->isAdmin()) {
       throw new \Exception("Only admin users are allowed to modify admin users");
     }
 
     // Umwandlung der Keys
     $keys = array();
-    foreach ($user->getKeys() as $key) {
+    foreach ($yubikey_user->getKeys() as $key) {
       $keys[] = array($key["serial"], $key["comment"]);
     }
 
     $data = array(
       "success" => "true",
       "yubikey" => array(
-        "activelocal" => $user->getActivelocal() ? 1 : 0,
+        "activelocal" => $yubikey_user->getActivelocal() ? 1 : 0,
         "keys" => $keys
       )
     );
@@ -67,9 +67,9 @@ class UserController extends \Pimcore\Controller\Action\Admin {
       $user_info["keys"] = $keys;
     }
 
-    $yubikey_user = YubiKey_User::getById($id);
+    $yubikey_user = User::getById($id);
     if (is_null($yubikey_user)) {
-      $yubikey_user = new YubiKey_User();
+      $yubikey_user = new User();
       $yubikey_user->setId($id);
     }
     $yubikey_user->setActivelocal($keymapping["activelocal"] == 1);

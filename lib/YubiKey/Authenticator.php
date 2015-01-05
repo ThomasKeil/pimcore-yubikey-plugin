@@ -14,7 +14,6 @@
  */
 
 namespace YubiKey;
-use Pimcore\Log;
 use Pimcore\Model;
 use Auth;
 
@@ -30,12 +29,11 @@ class Authenticator {
    */
   public static function authenticate($username, $password) {
 
-    Log\Simple::log("YubiKey", "Authenticating User ".$username);
+    Logger::log("Authenticating User ".$username);
 
     $pimcore_user = \Pimcore\Model\User::getByName($username);
     if (! $pimcore_user instanceof \Pimcore\Model\User) {
-      Log\Simple::log("YubiKey", "User ".$username." nicht gefunden.");
-
+      Logger::log("User ".$username." nicht gefunden.");
       return null;
     }
 
@@ -55,21 +53,16 @@ class Authenticator {
       if ($key["serial"] == $serial) {
         try {
           $yubico->verify($password);
-
         } catch (\Exception $e) {
-          Log\Simple::log("YubiKey", "Authentication failed: " . $e->getMessage());
-          Log\Simple::log("YubiKey", "Debug output from server: ".$yubico->getLastResponse());
-
+          Logger::log("Authentication failed: " . $e->getMessage());
+          Logger::debug("Debug output from server: ".$yubico->getLastResponse());
           return null;
         }
 
-        Log\Simple::log("YubiKey", "Success Authenticating User ".$username);
+        Logger::log("Success Authenticating User ".$username);
         return $pimcore_user;
-
       }
     }
     return null;
-
   }
-
 }

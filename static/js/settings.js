@@ -156,11 +156,12 @@ pimcore.plugin.yubikey.settings = Class.create({
                                 checked: this.data.remote.usessl
                             },
                             {
-                                xtype: "textfield",
-                                fieldLabel: t("apikey"),
-                                name: "remote_apikey",
-                                value: this.data.remote.apikey,
-                                width: 400
+                                xtype: "textarea",
+                                fieldLabel: t("Public Key"),
+                                name: "remote_publickey",
+                                value: this.data.remote.publickey,
+                                width: 500,
+                                height: 100
                             }
                         ]
                     }
