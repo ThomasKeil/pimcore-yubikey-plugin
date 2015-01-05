@@ -29,20 +29,36 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     }
 
 	public static function install (){
-      if (!is_dir(YUBIKEY_PLUGIN_VAR)) mkdir(YUBIKEY_PLUGIN_VAR);
+    if (!is_dir(YUBIKEY_PLUGIN_VAR)) mkdir(YUBIKEY_PLUGIN_VAR);
 
-      foreach (array("users.xml", "config.xml") as $config_file) {
-        if (!file_exists(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR.$config_file)) {
-          copy(YUBIKEY_PLUGIN_PATH.DIRECTORY_SEPARATOR."files".DIRECTORY_SEPARATOR.$config_file, YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR.$config_file);
-        }
-
+    foreach (array("users.xml", "config.xml") as $config_file) {
+      if (!file_exists(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR.$config_file)) {
+        copy(YUBIKEY_PLUGIN_PATH.DIRECTORY_SEPARATOR."files".DIRECTORY_SEPARATOR.$config_file, YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR.$config_file);
       }
 
-      if (self::isInstalled()) {
-        return "YubiKey Plugin successfully installed.";
-      } else {
-        return "YubiKey Plugin could not be installed";
-      }
+    }
+
+    $crypt = new Zend_Crypt_Rsa();
+    $keys = $crypt->generateKeys();
+
+    /** @var \Zend_Crypt_Rsa_Key_Private $privateKey */
+    $privateKey = $keys["privateKey"];
+
+    /** @var \Zend_Crypt_Rsa_Key_Public $publicKey */
+    $publicKey = $keys["privateKey"];
+
+    $config = \YubiKey\Config::getInstance();
+    $data = $config->getData();
+    $data["yubikey"]["local"]["privatekey"] = $privateKey->toString();
+    $data["yubikey"]["local"]["publickey"] = $publicKey->toString();
+    $config->setData($data);
+    $config->save();
+
+    if (self::isInstalled()) {
+      return "YubiKey Plugin successfully installed.";
+    } else {
+      return "YubiKey Plugin could not be installed";
+    }
 
 	}
 	

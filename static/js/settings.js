@@ -80,11 +80,11 @@ pimcore.plugin.yubikey.settings = Class.create({
                 autoScroll: true,
                 items: [
                     {
-                        xtype:'fieldset',
+                        xtype: 'fieldset',
                         title: t('Lokale Authentifizierung'),
                         collapsible: true,
                         collapsed: false,
-                        autoHeight:true,
+                        autoHeight: true,
                         labelWidth: 250,
                         items: [
                             {
@@ -92,6 +92,32 @@ pimcore.plugin.yubikey.settings = Class.create({
                                 fieldLabel: t("Lokale Authentifizierung benutzen"),
                                 name: "local_uselocal",
                                 checked: this.data.local.uselocal
+                            }
+                        ]
+                    },
+                    {
+                        xtype:'fieldset',
+                        title: t('Lokale Schlüssel'),
+                        collapsible: true,
+                        collapsed: false,
+                        autoHeight:true,
+                        labelWidth: 250,
+                        items: [
+                            {
+                                xtype: "textarea",
+                                fieldLabel: t("Private Key"),
+                                name: "local_privatekey",
+                                value: this.data.local.privatekey,
+                                width: 500,
+                                height: 100
+                            },
+                            {
+                                xtype: "textarea",
+                                fieldLabel: t("Public Key"),
+                                name: "local_publickey",
+                                value: this.data.local.publickey,
+                                width: 500,
+                                height: 100
                             }
                         ]
                     },
