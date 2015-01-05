@@ -17,10 +17,10 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             $password = $event->getParam("password");
 
             $user = Authenticator::authenticate($username, $password);
-            if (is_null($user)) {
+            if (! $user instanceof \Pimcore\Model\User) {
                 $user = RemoteAuthenticator::authenticate($username, $password);
             }
-            if ($user instanceof User) {
+            if ($user instanceof \Pimcore\Model\User) {
                 $event->getTarget()->setUser($user);
             }
 

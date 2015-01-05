@@ -32,8 +32,8 @@ class Authenticator {
 
     Log\Simple::log("YubiKey", "Authenticating User ".$username);
 
-    $pimcore_user = Model\User\AbstractUser::getByName($username);
-    if (! $pimcore_user instanceof User) {
+    $pimcore_user = \Pimcore\Model\User::getByName($username);
+    if (! $pimcore_user instanceof \Pimcore\Model\User) {
       Log\Simple::log("YubiKey", "User ".$username." nicht gefunden.");
 
       return null;
