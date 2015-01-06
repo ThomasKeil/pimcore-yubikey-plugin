@@ -29,7 +29,8 @@ class YubiKey_SettingsController extends \Pimcore\Controller\Action\Admin {
               "server" => $values["remote_server"],
               "port" => $values["remote_port"],
               "usessl" =>  $values["remote_usessl"] ? 1 : 0,
-              "publickey" => $values["remote_publickey"]
+              "publickey" => $values["remote_publickey"],
+              "identifier" => $values["remote_identifier"]
           )
         )
       );

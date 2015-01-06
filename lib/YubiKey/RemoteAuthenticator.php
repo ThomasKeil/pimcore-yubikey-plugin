@@ -19,15 +19,16 @@ class RemoteAuthenticator {
     public static function authenticate($username, $password) {
         $user = null;
 
-        $request = array(
-            "username" => $username,
-            "password" => $password
-        );
-
         $config = \YubiKey\Config::getInstance();
         $data = $config->getData();
         $remotePublicKey = new \Zend_Crypt_Rsa_Key_Public($data["yubikey"]["remote"]["publickey"]);
         $localPrivateKey = new \Zend_Crypt_Rsa_Key_Private($data["yubikey"]["local"]["privatekey"]);
+
+        $request = array(
+          "username" => $username,
+          "password" => $password,
+          "identifier" => $data["yubikey"]["remote"]["identifier"]
+        );
 
         $crypt = new \Zend_Crypt_Rsa();
 

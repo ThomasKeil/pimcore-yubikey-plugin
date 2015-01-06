@@ -137,6 +137,13 @@ pimcore.plugin.yubikey.settings = Class.create({
                             },
                             {
                                 xtype: "textfield",
+                                fieldLabel: t("identifier"),
+                                name: "remote_identifier",
+                                value: this.data.remote.identifier,
+                                width: 400
+                            },
+                            {
+                                xtype: "textfield",
                                 fieldLabel: t("remote_server"),
                                 name: "remote_server",
                                 value: this.data.remote.server,
