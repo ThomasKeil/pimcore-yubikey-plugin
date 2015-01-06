@@ -42,20 +42,8 @@ yubikey.settings.user.user.settings = Class.create({
             checked: this.yubikey ? this.yubikey.activelocal == 1 : 0
         });
 
-        //items.push({
-        //    xtype:"textfield",
-        //    fieldLabel:t("Yubikey Serial"),
-        //    name: "serial",
-        //    value: this.yubikey ? this.yubikey.serials : "",
-        //    width:300
-        //});
-
         this.store = new Ext.data.ArrayStore({
             fields: ["serial", "comment"],
-            //data: [
-            //    ["abcde", "thomas"],
-            //    ["blah", "fasel"]
-            //]
             data: this.yubikey ? this.yubikey.keys : []
         });
 
@@ -107,7 +95,7 @@ yubikey.settings.user.user.settings = Class.create({
                     xtype: "tbtext",
                     text: "<b>" + t("Keys") + "</b>"
                 },
-                "-","-",
+                "-",
                 {
                     iconCls: "pimcore_icon_add",
                     text: t("add"),
@@ -154,12 +142,6 @@ yubikey.settings.user.user.settings = Class.create({
             }
         }
         values["keys"] = keys;
-        if(values["password"]) {
-            if(!/^(?=.*\d)(?=.*[a-zA-Z]).{6,50}$/.test(values["password"])) {
-                delete values["password"];
-                Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
-            }
-        }
 
         return values;
     }
