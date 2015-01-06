@@ -13,16 +13,14 @@
  *
  */
 
-namespace YubiKey;
-
-class UserController extends \Pimcore\Controller\Action\Admin {
+class YubiKey_UserController extends \Pimcore\Controller\Action\Admin {
 
   public function loadAction() {
     $id = $this->getParam("id");
 
     $this->protectCSRF();
 
-    $yubikey_user = User::getById($id);
+    $yubikey_user = \YubiKey\User::getById($id);
 
     if (is_null($yubikey_user)) {
       $this->_helper->json(array("success" => false, "message" => "User not found"));
@@ -67,9 +65,9 @@ class UserController extends \Pimcore\Controller\Action\Admin {
       $user_info["keys"] = $keys;
     }
 
-    $yubikey_user = User::getById($id);
+    $yubikey_user = \YubiKey\User::getById($id);
     if (is_null($yubikey_user)) {
-      $yubikey_user = new User();
+      $yubikey_user = new \YubiKey\User();
       $yubikey_user->setId($id);
     }
     $yubikey_user->setActivelocal($keymapping["activelocal"] == 1);
