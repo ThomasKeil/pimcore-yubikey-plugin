@@ -21,6 +21,6 @@ class Logger {
 
 
   private static function _log($message) {
-    Log\Simple::log("YubiKey", $message);
+    Log\Simple::log("YubiKey", "[LA] ".$message);
   }
 }
