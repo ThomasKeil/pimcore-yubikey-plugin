@@ -15,7 +15,6 @@ pimcore.plugin.yubikey.settings = Class.create({
             success: function (response) {
                 var data = Ext.decode(response.responseText)
                 this.data = data.yubikey;
-                console.log(this.data);
                 this.getTabPanel();
 
             }.bind(this),
