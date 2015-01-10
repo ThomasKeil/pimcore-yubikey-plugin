@@ -6,3 +6,6 @@
     background: url(/plugins/YubiKey/static/icons/yubikey.png) no-repeat !important;
 }
 
+.yubikey_icon_createkey {
+    background: url(/pimcore/static/img/icon/key.png) no-repeat !important;
+}

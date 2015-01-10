@@ -71,6 +71,22 @@ pimcore.plugin.yubikey.settings = Class.create({
             }.bind(this));
 
 
+            this.privatekey = new Ext.form.TextArea({
+                fieldLabel: t("Private Key"),
+                name: "privatekey",
+                value: this.data.local.privatekey,
+                width: 500,
+                height: 100
+            });
+
+            this.publickey = new Ext.form.TextArea({
+                fieldLabel: t("Public Key"),
+                name: "publickey",
+                value: this.data.local.publickey,
+                width: 500,
+                height: 100
+            });
+
 
             this.layout = new Ext.FormPanel({
                 layout: "pimcoreform",
@@ -102,21 +118,35 @@ pimcore.plugin.yubikey.settings = Class.create({
                         autoHeight:true,
                         labelWidth: 250,
                         items: [
+                            this.privatekey,
+                            this.publickey,
                             {
-                                xtype: "textarea",
-                                fieldLabel: t("Private Key"),
-                                name: "local_privatekey",
-                                value: this.data.local.privatekey,
-                                width: 500,
-                                height: 100
-                            },
-                            {
-                                xtype: "textarea",
-                                fieldLabel: t("Public Key"),
-                                name: "local_publickey",
-                                value: this.data.local.publickey,
-                                width: 500,
-                                height: 100
+                                xtype: "button",
+                                text: t("Neues Schlüsselpaar erzeugen"),
+                                iconCls: "yubikey_icon_createkey",
+                                handler: function () {
+
+                                    Ext.Ajax.request({
+                                        url: "/plugin/YubiKey/key/create",
+                                        method: "get",
+                                        success: function (response) {
+                                            try {
+                                                var res = Ext.decode(response.responseText);
+                                                if (res.success) {
+                                                    this.privatekey.setValue(res.keys.private);
+                                                    this.publickey.setValue(res.keys.public);
+
+                                                } else {
+                                                    pimcore.helpers.showNotification(t("error"), t("yubikeyremoteauthenticator_key_error"),
+                                                        "error", t(res.message));
+                                                }
+                                            } catch(e) {
+                                                pimcore.helpers.showNotification(t("error"), t("yubikeyremoteauthenticator_key_error"), "error");
+                                            }
+                                        }.bind(this)
+                                    });
+
+                                }.bind(this, this.privatekey, this.publickey)
                             }
                         ]
                     },
@@ -147,19 +177,6 @@ pimcore.plugin.yubikey.settings = Class.create({
                                 name: "remote_server",
                                 value: this.data.remote.server,
                                 width: 400
-                            },
-                            {
-                                xtype: "textfield",
-                                fieldLabel: t("port"),
-                                name: "remote_port",
-                                value: this.data.remote.port,
-                                width: 400
-                            },
-                            {
-                                xtype: "checkbox",
-                                fieldLabel: t("SSL verwenden"),
-                                name: "remote_usessl",
-                                checked: this.data.remote.usessl
                             },
                             {
                                 xtype: "textarea",
