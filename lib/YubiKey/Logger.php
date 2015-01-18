@@ -18,8 +18,6 @@ class Logger {
     self::_log("debug: ".$message);
   }
 
-
-
   private static function _log($message) {
     Log\Simple::log("YubiKey", "[LA] ".$message);
   }

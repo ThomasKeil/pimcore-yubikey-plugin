@@ -14,6 +14,8 @@
  */
 
 namespace YubiKey;
+
+use Pimcore;
 use Pimcore\Model;
 use Auth;
 
@@ -31,8 +33,8 @@ class Authenticator {
 
     Logger::log("Authenticating User ".$username);
 
-    $pimcore_user = \Pimcore\Model\User::getByName($username);
-    if (! $pimcore_user instanceof \Pimcore\Model\User) {
+    $pimcore_user = Pimcore\Model\User::getByName($username);
+    if (! $pimcore_user instanceof Pimcore\Model\User) {
       Logger::log("User ".$username." nicht gefunden.");
       return null;
     }

@@ -2,6 +2,8 @@
 
 namespace YubiKey;
 
+use Pimcore;
+
 if (!defined("YUBIKEY_PLUGIN_PATH")) define("YUBIKEY_PLUGIN_PATH", PIMCORE_PLUGINS_PATH."/YubiKey");
 if (!defined("YUBIKEY_PLUGIN_VAR"))  define("YUBIKEY_PLUGIN_VAR", PIMCORE_WEBSITE_PATH . "/var/plugins/YubiKey");
 
@@ -11,16 +13,16 @@ use Pimcore\API\Plugin as PluginLib;
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface {
 
     public function init() {
-        \Pimcore::getEventManager()->attach("admin.login.login.failed", function (\Zend_EventManager_Event $event) {
+        Pimcore::getEventManager()->attach("admin.login.login.failed", function (\Zend_EventManager_Event $event) {
 
             $username = $event->getParam("username");
             $password = $event->getParam("password");
 
             $user = Authenticator::authenticate($username, $password);
-            if (! $user instanceof \Pimcore\Model\User) {
+            if (! $user instanceof Pimcore\Model\User) {
                 $user = RemoteAuthenticator::authenticate($username, $password);
             }
-            if ($user instanceof \Pimcore\Model\User) {
+            if ($user instanceof Pimcore\Model\User) {
                 $event->getTarget()->setUser($user);
             }
 
@@ -38,7 +40,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
     }
 
-    $crypt = new Zend_Crypt_Rsa();
+    $crypt = new \Zend_Crypt_Rsa();
     $keys = $crypt->generateKeys();
 
     /** @var \Zend_Crypt_Rsa_Key_Private $privateKey */
@@ -47,7 +49,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     /** @var \Zend_Crypt_Rsa_Key_Public $publicKey */
     $publicKey = $keys["privateKey"];
 
-    $config = \YubiKey\Config::getInstance();
+    $config = Config::getInstance();
     $data = $config->getData();
     $data["yubikey"]["local"]["privatekey"] = $privateKey->toString();
     $data["yubikey"]["local"]["publickey"] = $publicKey->toString();

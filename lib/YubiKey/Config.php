@@ -52,7 +52,7 @@ class Config {
       $config = new \Zend_Config_Xml(YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml");
       $this->config = $config->toArray();
     } catch (\Zend_Config_Exception $e) {
-      \Logger::error("Problems with config file \"".YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml\": ".$e->getMessage());
+      Logger::log("Problems with config file \"".YUBIKEY_PLUGIN_VAR.DIRECTORY_SEPARATOR."config.xml\": ".$e->getMessage());
       $this->config = $this->defaults;
     }
   }

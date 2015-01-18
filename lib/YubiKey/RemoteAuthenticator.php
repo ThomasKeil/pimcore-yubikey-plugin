@@ -7,7 +7,7 @@
  */
 
 namespace YubiKey;
-use Pimcore\Log;
+use Pimcore;
 
 class RemoteAuthenticator {
 
@@ -19,7 +19,7 @@ class RemoteAuthenticator {
     public static function authenticate($username, $password) {
         $user = null;
 
-        $config = \YubiKey\Config::getInstance();
+        $config = Config::getInstance();
         $data = $config->getData();
         $remotePublicKey = new \Zend_Crypt_Rsa_Key_Public($data["yubikey"]["remote"]["publickey"]);
         $localPrivateKey = new \Zend_Crypt_Rsa_Key_Private($data["yubikey"]["local"]["privatekey"]);
@@ -33,14 +33,16 @@ class RemoteAuthenticator {
         $crypt = new \Zend_Crypt_Rsa();
 
         $encrypted = $crypt->encrypt(json_encode($request), $remotePublicKey);
+        $signature = $crypt->sign($request, $localPrivateKey);
 
         $server = $data["yubikey"]["remote"]["server"];
 
         $client = new \Zend_Http_Client();
         $client->setUri($server."/plugin/YubiKeyRemoteAuthenticator/auth/auth");
         $client->resetParameters();
-
-        $client->setRawData($encrypted, "application/json");
+        $client->setParameterPost("method", "zend_crypt_rsa");
+        $client->setParameterPost("message", $encrypted);
+        $client->setParameterPost("signature", $signature);
 
 
         /** @var \Zend_Http_Response $response */
@@ -62,8 +64,8 @@ class RemoteAuthenticator {
         switch ($json["code"]) {
             case 200:
                 $authenticated_username = $json["username"];
-                $pimcore_user = \Pimcore\Model\User::getByName($authenticated_username);
-                if (! $pimcore_user instanceof \Pimcore\Model\User) {
+                $pimcore_user = Pimcore\Model\User::getByName($authenticated_username);
+                if (! $pimcore_user instanceof Pimcore\Model\User) {
                     Logger::log("User ".$authenticated_username." as specified by RemoteAuth not found.");
                     return null;
                 }
