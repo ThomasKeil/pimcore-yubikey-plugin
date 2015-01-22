@@ -24,16 +24,30 @@ class RemoteAuthenticator {
         $remotePublicKey = new \Zend_Crypt_Rsa_Key_Public($data["yubikey"]["remote"]["publickey"]);
         $localPrivateKey = new \Zend_Crypt_Rsa_Key_Private($data["yubikey"]["local"]["privatekey"]);
 
+        if (empty($remotePublicKey)) {
+            Logger::error("Remote public key not set");
+            return null;
+        }
+
+        if (empty($localPrivateKey)) {
+            Logger::error("Local private key not set");
+            return null;
+        }
+
         $request = array(
           "username" => $username,
           "password" => $password,
           "identifier" => $data["yubikey"]["remote"]["identifier"]
         );
 
-        $crypt = new \Zend_Crypt_Rsa();
+        $request_json = json_encode($request);
 
-        $encrypted = $crypt->encrypt(json_encode($request), $remotePublicKey);
-        $signature = $crypt->sign($request, $localPrivateKey);
+        $crypt = new Crypt\Rsa();
+
+        $encrypted = $crypt->encrypt($request_json, $remotePublicKey);
+
+        $signature = $crypt->sign($request_json, $localPrivateKey, $crypt::BASE64);
+        Logger::debug("Signature: ".$signature);
 
         $server = $data["yubikey"]["remote"]["server"];
 
@@ -56,14 +70,34 @@ class RemoteAuthenticator {
         $body = $response->getBody();
         Logger::debug("Received Body: ".$body);
 
-        $decrypted_body = $crypt->decrypt($body, $localPrivateKey);
-        Logger::debug("Received decrypted Body: ".$decrypted_body);
+        try {
+            $json = \Zend_Json_Decoder::decode($body);
+        } catch (\Zend_Json_Exception $e) {
+            Logger::log("Error remote authenticating, response is not json: ".$response->getStatus().": ".$response->getMessage());
+            return null;
+        }
 
-        $json = \Zend_Json_Decoder::decode($decrypted_body);
+        if (!is_array($json)) {
+            Logger::log("Error remote authenticating, response is not array: ".$response->getStatus().": ".$response->getBody());
+            return null;
+        }
 
         switch ($json["code"]) {
             case 200:
-                $authenticated_username = $json["username"];
+                $signature = base64_decode($json["signature"]);
+                $encrypted_message = base64_decode($json["message"]);
+                $decrypted_message = $crypt->decrypt($encrypted_message, $localPrivateKey);
+                Logger::debug("Received decrypted Body: ".$decrypted_message);
+
+                $message = \Zend_Json_Decoder::decode($decrypted_message);
+
+                $authentic = $crypt->verify($decrypted_message, $signature, $remotePublicKey);
+                if (!$authentic) {
+                    Logger::log("Message is not authentic.");
+                    return null;
+                }
+
+                $authenticated_username = $message["username"];
                 $pimcore_user = Pimcore\Model\User::getByName($authenticated_username);
                 if (! $pimcore_user instanceof Pimcore\Model\User) {
                     Logger::log("User ".$authenticated_username." as specified by RemoteAuth not found.");
@@ -78,7 +112,7 @@ class RemoteAuthenticator {
                 break;
 
             default:
-                Logger::log("Error remote authenticating. Body: ".$decrypted_body);
+                Logger::log("Error remote authenticating. Message: ".$json["message"]);
                 return null;
         }
     }

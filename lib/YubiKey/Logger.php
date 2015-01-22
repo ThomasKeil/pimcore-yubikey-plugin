@@ -15,10 +15,14 @@ class Logger {
   }
   
   public static function debug($message) {
-    self::_log("debug: ".$message);
+    self::_log("Debug: ".$message);
+  }
+
+  public static function error($message) {
+    self::_log("Error: ".$message);
   }
 
   private static function _log($message) {
-    Log\Simple::log("YubiKey", "[LA] ".$message);
+    Log\Simple::log("YubiKey", "[Local Auth] ".$message);
   }
 }
