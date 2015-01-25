@@ -1,19 +1,35 @@
 <?php
+/**
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
 
 class YubiKey_SettingsController extends \Pimcore\Controller\Action\Admin {
 
+  /**
+   * Reads the plugins settings
+   */
   public function settingsAction() {
     $config = \YubiKey\Config::getInstance();
     $data = $config->getData();
     $this->_helper->json($data);
   }
 
+  /**
+   * Saves the plugins settings
+   */
   public function saveAction() {
-    $values = \Zend_Json::decode($this->getParam("data"));
-
-    // convert all special characters to their entities so the xml writer can put it into the file
-    $values = array_htmlspecialchars($values);
     try {
+      $values = \Zend_Json::decode($this->getParam("data"));
+
+      // convert all special characters to their entities so the xml writer can put it into the file
+      $values = array_htmlspecialchars($values);
       $config = \YubiKey\Config::getInstance();
       $data = $config->getData();
 

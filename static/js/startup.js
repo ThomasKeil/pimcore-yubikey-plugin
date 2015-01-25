@@ -1,3 +1,15 @@
+/**
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+
 pimcore.registerNS("pimcore.plugin.yubikey");
 
 pimcore.plugin.yubikey = Class.create(pimcore.plugin.admin, {

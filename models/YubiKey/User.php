@@ -1,21 +1,22 @@
 <?php
- /**
- * Created by Thomas Keil - Weblizards GmbH.
- * User: Thomas Keil
- * Email: thomas@weblizards.de
+/**
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
  *
- * Date: 28.11.14
- * Time: 16:13
- *
- * Dieser Quellcode ist geistiges Eigentum der Weblizards GmbH
- * und darf ohne vorheriges schriftliches Einverständnis nicht
- * vervielfältigt werden.
- *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
 namespace YubiKey;
 use Pimcore\Model;
 
+/**
+ * Class User
+ * @package YubiKey
+ */
 class User {
 
   private $id;
@@ -36,8 +37,6 @@ class User {
   public function setId($id) {
     $this->id = $id;
   }
-
-
 
   /**
    * @return mixed
@@ -123,6 +122,9 @@ class User {
     );
   }
 
+  /**
+   * Saves the user to the XML file.
+   */
   public function save() {
 
     $dom = new \DOMDocument();

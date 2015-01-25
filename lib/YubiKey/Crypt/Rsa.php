@@ -1,11 +1,14 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: thomas
- * Date: 12.01.15
- * Time: 19:58
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
  */
-
 namespace YubiKey\Crypt;
 
 class Rsa extends \Zend_Crypt_Rsa {

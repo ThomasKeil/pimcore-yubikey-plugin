@@ -1,19 +1,11 @@
 /**
- * Created by thomas on 26.11.14.
- */
-
-
-/**
- * Pimcore
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
- * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
  * @license    http://www.pimcore.org/license     New BSD License
  */
 

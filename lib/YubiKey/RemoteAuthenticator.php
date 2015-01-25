@@ -1,14 +1,26 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: thomas
- * Date: 27.12.14
- * Time: 14:06
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
 namespace YubiKey;
 use Pimcore;
 
+/**
+ * Class RemoteAuthenticator
+ * @package YubiKey
+ *
+ * Tries to authenticate a user with a given username and password
+ * with a remote server. You can obtain the software for the remote
+ * server from us at www.weblizards.de
+ */
 class RemoteAuthenticator {
 
     /**
@@ -17,10 +29,20 @@ class RemoteAuthenticator {
      * @return null|\Pimcore\Model\User
      */
     public static function authenticate($username, $password) {
-        $user = null;
-
         $config = Config::getInstance();
         $data = $config->getData();
+
+        if ($data["yubikey"]["remote"]["useremote"] != 1) {
+            return null;
+        }
+
+        if (!function_exists("openssl_encrypt")) {
+            Logger::error("Cannot authenticate remotely, openssl extension is missing.");
+            return null;
+        }
+
+        $user = null;
+
         $remotePublicKey = new \Zend_Crypt_Rsa_Key_Public($data["yubikey"]["remote"]["publickey"]);
         $localPrivateKey = new \Zend_Crypt_Rsa_Key_Private($data["yubikey"]["local"]["privatekey"]);
 

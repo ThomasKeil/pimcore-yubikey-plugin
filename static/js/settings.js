@@ -1,6 +1,14 @@
 /**
- * Created by thomas on 11.08.14.
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
  */
+
 pimcore.registerNS("pimcore.plugin.yubikey.settings");
 pimcore.plugin.yubikey.settings = Class.create({
 
@@ -190,12 +198,15 @@ pimcore.plugin.yubikey.settings = Class.create({
                     }
 
                 ],
-                buttons: [
+                tbar: [
                     {
                         text: "Save",
                         handler: this.save.bind(this),
                         iconCls: "pimcore_icon_apply"
                     }
+                ],
+                bbar: [
+                    "<span>Developed by <a href='http://www.weblizards.de/pimcore-development/yubikey?pk_campaign=PluginSettings' target='_blank'>Weblizards - Custom Internet Solutions</a></span>",
                 ]
             });
 

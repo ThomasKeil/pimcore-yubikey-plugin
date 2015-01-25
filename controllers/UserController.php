@@ -1,20 +1,20 @@
 <?php
- /**
- * Created by Thomas Keil - Weblizards GmbH.
- * User: Thomas Keil
- * Email: thomas@weblizards.de
+/**
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
  *
- * Date: 26.11.14
- * Time: 18:12
- *
- * Dieser Quellcode ist geistiges Eigentum der Weblizards GmbH
- * und darf ohne vorheriges schriftliches Einverst�ndnis nicht
- * vervielf�ltigt werden.
- *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class YubiKey_UserController extends \Pimcore\Controller\Action\Admin {
 
+  /**
+   * Reads the data of a user
+   */
   public function loadAction() {
     $id = $this->getParam("id");
 
@@ -29,7 +29,7 @@ class YubiKey_UserController extends \Pimcore\Controller\Action\Admin {
     $pimcore_user = \Pimcore\Model\User::getById(intval($this->getParam("id")));
 
     if($pimcore_user instanceof \Pimcore\Model\User && $pimcore_user->isAdmin() && !$yubikey_user->getPimcoreUser()->isAdmin()) {
-      throw new \Exception("Only admin users are allowed to modify admin users");
+      $this->_helper->json(array("success" => false, "message" => "Only admin users are allowed to modify admin users"));
     }
 
     // Umwandlung der Keys
@@ -48,6 +48,9 @@ class YubiKey_UserController extends \Pimcore\Controller\Action\Admin {
     $this->_helper->json($data);
   }
 
+  /**
+   * Saves the data of a user.
+   */
   public function saveAction() {
     $id = $this->getParam("id");
     $keymapping = (array)json_decode($this->getParam("keymapping"));

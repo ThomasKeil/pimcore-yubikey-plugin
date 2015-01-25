@@ -1,9 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: thomas
- * Date: 28.11.13
- * Time: 09:02
+ * This source file is subject to the new BSD license that is
+ * available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @copyright  Copyright (c) 2015 Weblizards GmbH (http://www.weblizards.de)
+ * @author     Thomas Keil <thomas@weblizards.de>
+ * @license    http://www.pimcore.org/license     New BSD License
  */
 
 namespace YubiKey;
@@ -21,8 +25,7 @@ class Config {
    */
   private $config;
 
-  private $defaults = array(
-  );
+  private $defaults = array();
 
   /**
    * Singleton instance
@@ -64,11 +67,16 @@ class Config {
     return $this->config;
   }
 
-
+  /**
+   * @param array $data
+   */
   public function setData($data) {
     $this->config = $data;
   }
 
+  /**
+   * @throws \Zend_Config_Exception
+   */
   public function save() {
     $defaults = $this->defaults;
     $params = $this->getData();
@@ -83,6 +91,11 @@ class Config {
     $writer->write();
   }
 
+  /**
+   * @param $original
+   * @param $array
+   * @return mixed
+   */
   private function array_join($original, $array) {
     foreach ($array as $key => $value) {
       if (is_array($value)) {
