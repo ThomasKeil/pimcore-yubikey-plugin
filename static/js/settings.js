@@ -81,7 +81,7 @@ pimcore.plugin.yubikey.settings = Class.create({
 
             this.privatekey = new Ext.form.TextArea({
                 fieldLabel: t("Private Key"),
-                name: "privatekey",
+                name: "local_privatekey",
                 value: this.data.local.privatekey,
                 width: 500,
                 height: 100
@@ -89,7 +89,7 @@ pimcore.plugin.yubikey.settings = Class.create({
 
             this.publickey = new Ext.form.TextArea({
                 fieldLabel: t("Public Key"),
-                name: "publickey",
+                name: "local_publickey",
                 value: this.data.local.publickey,
                 width: 500,
                 height: 100

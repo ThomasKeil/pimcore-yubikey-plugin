@@ -43,8 +43,19 @@ class RemoteAuthenticator {
 
         $user = null;
 
-        $remotePublicKey = new \Zend_Crypt_Rsa_Key_Public($data["yubikey"]["remote"]["publickey"]);
-        $localPrivateKey = new \Zend_Crypt_Rsa_Key_Private($data["yubikey"]["local"]["privatekey"]);
+        try {
+            $remotePublicKey = new \Zend_Crypt_Rsa_Key_Public($data["yubikey"]["remote"]["publickey"]);
+        } catch (\Exception $e) {
+            Logger::error("Problems loading the remote public key: ".$e->getMessage());
+            return null;
+        }
+
+        try {
+            $localPrivateKey = new \Zend_Crypt_Rsa_Key_Private($data["yubikey"]["local"]["privatekey"]);
+        } catch (\Exception $e) {
+            Logger::error("Problems loading the local private key: ".$e->getMessage());
+            return null;
+        }
 
         if (empty($remotePublicKey)) {
             Logger::error("Remote public key not set");
