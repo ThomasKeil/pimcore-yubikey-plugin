@@ -31,7 +31,6 @@ pimcore.settings.user.usertab = Class.create(pimcore.settings.user.usertab, {
                 }
             });
 
-            // TODO: Yubikey laden
         }
     },
 
