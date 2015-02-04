@@ -97,6 +97,14 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 	}
 
   /**
+   * @return bool
+   */
+  public static function needsReloadAfterInstall() {
+    return true;
+  }
+
+
+  /**
    * Removes the plugins files in /website/var/plugins/YubiKey
    *
    * @return string
