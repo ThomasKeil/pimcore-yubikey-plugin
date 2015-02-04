@@ -76,7 +76,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
       $privateKey = $keys["privateKey"];
 
       /** @var \Zend_Crypt_Rsa_Key_Public $publicKey */
-      $publicKey = $keys["privateKey"];
+      $publicKey = $keys["publicKey"];
     } catch (\Exception $e) {
       return "YubiKey Plugin could not be installed: ".$e->getMessage();
     }
