@@ -17,3 +17,4 @@
 "identifier", "Identifier"
 "Neues Schlüsselpaar erzeugen", "Create new key pair"
 "yubikeyremoteauthenticator_key_error", "Error while creating a new key pair"
+"YubiKey Icon zeigen beim Login", "Show YubiKey Icon on login screen"

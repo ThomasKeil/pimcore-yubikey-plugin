@@ -38,7 +38,8 @@ class YubiKey_SettingsController extends \Pimcore\Controller\Action\Admin {
           "local" => array(
               "uselocal" => $values["local_uselocal"] ? 1 : 0,
               "privatekey" => $values["local_privatekey"],
-              "publickey" => $values["local_publickey"]
+              "publickey" => $values["local_publickey"],
+              "showicon" =>  $values["local_showicon"]
           ),
           "remote" => array(
               "useremote" =>  $values["remote_useremote"] ? 1 : 0,

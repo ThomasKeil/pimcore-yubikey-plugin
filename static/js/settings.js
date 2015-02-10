@@ -115,6 +115,12 @@ pimcore.plugin.yubikey.settings = Class.create({
                                 fieldLabel: t("Lokale Authentifizierung benutzen"),
                                 name: "local_uselocal",
                                 checked: this.data.local.uselocal
+                            },
+                            {
+                                xtype: "checkbox",
+                                fieldLabel: t("YubiKey Icon zeigen beim Login"),
+                                name: "local_showicon",
+                                checked: this.data.local.showicon
                             }
                         ]
                     },

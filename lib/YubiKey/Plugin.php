@@ -160,4 +160,14 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     return "/YubiKey/texts/de.csv";
   }
 
+  public function getCssPaths() {
+    $paths = parent::getCssPaths();
+    $config = Config::getInstance();
+    $data = $config->getData();
+    if ($data["yubikey"]["local"]["showicon"] == 1) {
+      $paths[] = "/plugins/YubiKey/static/css/login.css";
+    }
+    return $paths;
+  }
+
 }
