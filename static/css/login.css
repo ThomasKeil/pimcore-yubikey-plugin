@@ -8,6 +8,5 @@
 #loginform  {
     background-image: url(/plugins/YubiKey/static/icons/yubikey.png);
     background-repeat: no-repeat;
-    background-position-x: 0;
-    background-position-y: 209px;
+    background-position: bottom left;
 }
