@@ -18,3 +18,5 @@
 "Neues Schlüsselpaar erzeugen", "Create new key pair"
 "yubikeyremoteauthenticator_key_error", "Error while creating a new key pair"
 "YubiKey Icon zeigen beim Login", "Show YubiKey Icon on login screen"
+"yubikeyremotepublickey_error", "Error getting the public key"
+"Public Key vom Server holen", "Get public key from server"
