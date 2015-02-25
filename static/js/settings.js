@@ -95,6 +95,21 @@ pimcore.plugin.yubikey.settings = Class.create({
                 height: 100
             });
 
+            this.serverurl = new Ext.form.TextField({
+                fieldLabel: t("remote_server"),
+                name: "remote_server",
+                value: this.data.remote.server,
+                width: 400
+            });
+
+            this.remotepublickey = new Ext.form.TextArea(                            {
+                fieldLabel: t("Public Key"),
+                name: "remote_publickey",
+                value: this.data.remote.publickey,
+                width: 500,
+                height: 100
+            });
+
 
             this.layout = new Ext.FormPanel({
                 layout: "pimcoreform",
@@ -185,21 +200,35 @@ pimcore.plugin.yubikey.settings = Class.create({
                                 value: this.data.remote.identifier,
                                 width: 400
                             },
+                            this.serverurl,
+                            this.remotepublickey,
                             {
-                                xtype: "textfield",
-                                fieldLabel: t("remote_server"),
-                                name: "remote_server",
-                                value: this.data.remote.server,
-                                width: 400
-                            },
-                            {
-                                xtype: "textarea",
-                                fieldLabel: t("Public Key"),
-                                name: "remote_publickey",
-                                value: this.data.remote.publickey,
-                                width: 500,
-                                height: 100
+                                xtype: "button",
+                                text: t("Public Key vom Server holen"),
+                                iconCls: "yubikey_icon_fetchkey",
+                                handler: function () {
+                                    Ext.Ajax.request({
+                                        url: this.serverurl.getValue() + "/plugin/YubiKeyRemoteAuthenticator/key/publickey",
+                                        method: "get",
+                                        success: function (response) {
+                                            try {
+                                                var res = Ext.decode(response.responseText);
+                                                if (res.success) {
+                                                    this.remotepublickey.setValue(res.publickey);
+
+                                                } else {
+                                                    pimcore.helpers.showNotification(t("error"), t("yubikeyremotepublickey_error"),
+                                                        "error", t(res.message));
+                                                }
+                                            } catch(e) {
+                                                pimcore.helpers.showNotification(t("error"), t("yubikeyremotepublickey_error"), "error");
+                                            }
+                                        }.bind(this)
+                                    });
+
+                                }.bind(this, this.privatekey, this.publickey)
                             }
+
                         ]
                     }
 

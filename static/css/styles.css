@@ -9,3 +9,7 @@
 .yubikey_icon_createkey {
     background: url(/pimcore/static/img/icon/key.png) no-repeat !important;
 }
+
+.yubikey_icon_fetchkey {
+    background: url(/pimcore/static/img/icon/key_go.png) no-repeat !important;
+}

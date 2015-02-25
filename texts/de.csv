@@ -18,3 +18,5 @@
 "Neues Schlüsselpaar erzeugen", "Neues Schlüsselpaar erzeugen"
 "yubikeyremoteauthenticator_key_error", "Fehler beim Erzeugen des Schlüsselpaars"
 "YubiKey Icon zeigen beim Login", "YubiKey Icon zeigen beim Login"
+"yubikeyremotepublickey_error", "Fehler beim Holen des Public Keys"
+"Public Key vom Server holen", "Public Key vom Server holen"
